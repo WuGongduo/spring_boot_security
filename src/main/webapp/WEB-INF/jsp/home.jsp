@@ -1,5 +1,4 @@
-<#-- @ftlvariable name="_csrf" type="org.springframework.security.web.csrf.CsrfToken" -->
-<#-- @ftlvariable name="currentUser" type="eu.kielczewski.example.domain.CurrentUser" -->
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,22 +8,23 @@
 <body>
 <nav role="navigation">
     <ul>
-    <#if !currentUser??>
-        <li><a href="/login">Log in</a></li>
-    </#if>
-    <#if currentUser??>
-        <li>
-            <form action="/logout" method="post">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit">Log out</button>
-            </form>
-        </li>
-        <li><a href="/user/${currentUser.id}">View myself</a></li>
-    </#if>
-        <#if currentUser?? && currentUser.role == "ADMIN">
-        <li><a href="/user/create">Create a new user</a></li>
-        <li><a href="/users">View all users</a></li>
-        </#if>
+        <c:if test="${empty currentUser}">
+            <li><a href="/login">Log in</a></li>
+        </c:if>
+
+        <c:if test="${not empty  currentUser}">
+            <li>
+                <form action="/logout" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">Log out</button>
+                </form>
+            </li>
+            <li><a href="/user/${currentUser.id}">View myself</a></li>
+        </c:if>
+        <c:if test='${currentUser.role.contains("admin")}'>
+            <li><a href="/user/create">Create a new user</a></li>
+            <li><a href="/users">View all users</a></li>
+        </c:if>
     </ul>
 </nav>
 </body>

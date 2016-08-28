@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +17,8 @@
 <p>You can use: demo@localhost / demo</p>
 
 <form role="form" action="/login" method="post">
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <%--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
+    <input name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
     <div>
         <label for="name">name</label>
@@ -33,8 +35,9 @@
     <button type="submit">Sign in</button>
 </form>
 
-<#if error.isPresent()>
-<p>The email or password you have entered is invalid, try again.</p>
-</#if>
+<c:if test="${error.isPresent()}">
+    <c:out value="The email or password you have entered is invalid, try again."/>
+</c:if>
+
 </body>
 </html>
