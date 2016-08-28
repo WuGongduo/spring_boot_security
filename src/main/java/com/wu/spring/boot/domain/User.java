@@ -1,6 +1,10 @@
 package com.wu.spring.boot.domain;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -11,8 +15,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
+    @Column(name = "userName", nullable = false, unique = true)
     private String name;
     private String passwordHash;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Role> roleList;
+
+    public User() {
+    }
+
+    public User(String name, String passwordHash, Role role) {
+        this.name = name;
+        this.passwordHash = new BCryptPasswordEncoder().encode(passwordHash);
+        this.roleList = Arrays.asList(role);
+    }
 
     public List<Role> getRoleList() {
         return roleList;
@@ -21,8 +37,6 @@ public class User {
     public void setRoleList(List<Role> roleList) {
         this.roleList = roleList;
     }
-
-    private List<Role> roleList;
 
     public Long getId() {
         return id;
@@ -41,7 +55,7 @@ public class User {
     }
 
     public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+        this.passwordHash = new BCryptPasswordEncoder().encode(passwordHash);
     }
 
 
@@ -53,5 +67,13 @@ public class User {
                 ", passwordHash='" + passwordHash + '\'' +
                 ", roleList=" + roleList +
                 '}';
+    }
+
+    public String[] getRoles() {
+        List<String> roles = new ArrayList<>();
+        for(Role role : roleList) {
+            roles.add(role.getRoleName());
+        }
+        return roles.toArray(new String[roles.size()]);
     }
 }
